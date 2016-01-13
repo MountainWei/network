@@ -18,12 +18,16 @@ s.listen(5)
 print 'Socket is listening now.'
 
 try:
-    while 1:
+    while True:
         conn, addr = s.accept()
         print 'Connected by', addr
-        while 1:
+        while True:
             data = conn.recv(1024)
-            reply = 'OK~~~' + data
+            if not data:
+                conn.close()
+                break
+            print ('[Client %s:%s said]:%s' % (addr[0], addr[1], data))
+            reply = 'server has received your message.'
             conn.sendall(reply)
         conn.close()
 
