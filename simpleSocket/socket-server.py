@@ -1,12 +1,21 @@
 #!/usr/bin/env python
 import socket
-import commands
+import sys
 
 HOST = '192.168.200.132'
 PORT = 50012
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+except socket.error, msg:
+    print 'Failed to create socket,Error code: ' + str(msg[0]) + ', Error message: ' + msg[1]
+    sys.exit()
+
+print 'Socket Created.'
+
 s.bind((HOST, PORT))
-s.listen(1)
+print 'Socket bind complete'
+s.listen(5)
+print 'Socket is listening now.'
 
 try:
     while 1:
@@ -14,11 +23,8 @@ try:
         print 'Connected by', addr
         while 1:
             data = conn.recv(1024)
-            cmd_status, cmd_result = commands.getstatusoutput(data)
-            if len(cmd_result.strip()) == 0:
-                conn.sendall('Done.')
-            else:
-                conn.sendall(cmd_result)
+            reply = 'OK~~~' + data
+            conn.sendall(reply)
         conn.close()
 
 finally:
